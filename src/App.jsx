@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Search, Menu, X, MapPin, TrendingUp, Bell, CheckCircle } from "lucide-react";
 import './App.css';
 import Footer from '../components/Footer';
+import Login from '../components/Login';
 
 const CityTrack = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentView, setCurrentView] = useState('home'); // Add view state
   const mobileNavRef = useRef(null);
   const menuButtonRef = useRef(null);
 
@@ -62,9 +64,29 @@ const CityTrack = () => {
     }
   };
 
-  // Handle report button
-  const handleReport = () => {
-    alert('Report Issue functionality would open here');
+  // Fixed report button handler
+  const handleLogin = () => {
+    // Option 1: Navigate to login page
+    setCurrentView('login');
+    
+    // Option 2: Or show an alert/modal (alternative approach)
+    // alert('Please login to report an issue');
+    
+    // Option 3: Or open report form directly (if user is authenticated)
+    // setCurrentView('report');
+  };
+
+  // Handle login success
+  const handleLoginSuccess = (userData) => {
+    // After successful login, you can redirect to report page or home
+    setCurrentView('home');
+    // You might also want to set user data in state
+    console.log('User logged in:', userData);
+  };
+
+  // Handle back to home
+  const handleBackToHome = () => {
+    setCurrentView('home');
   };
 
   // Smooth scroll to section
@@ -76,6 +98,28 @@ const CityTrack = () => {
     setIsMobileMenuOpen(false);
   };
 
+  // If showing login page, render Login component
+  if (currentView === 'login') {
+    return (
+      <Login 
+        onLogin={handleLoginSuccess}
+        onBack={handleBackToHome}
+      />
+    );
+  }
+
+  // If showing report page (you can create this later)
+  if (currentView === 'report') {
+    return (
+      <div>
+        <h1>Report Issue Page</h1>
+        <button onClick={handleBackToHome}>Back to Home</button>
+        {/* Add your report form here */}
+      </div>
+    );
+  }
+
+  // Main home view
   return (
     <div className="app-container">
       {/* Navigation */}
@@ -127,14 +171,17 @@ const CityTrack = () => {
         <div className="nav-right">
           <Search className="search-icon" />
           <button 
-            onClick={handleReport}
             className="report-button"
           >
             Report Issue
           </button>
-          <div className="profile-avatar">
+          <button
+          onClick={handleLogin}>
+            <div className="profile-avatar">
             👤
           </div>
+          </button>
+          
           
           {/* Mobile menu button */}
           <button 
@@ -274,8 +321,8 @@ const CityTrack = () => {
           </div>
         </div>
       </section>
+      
       <Footer />
-
     </div>
   );
 };
